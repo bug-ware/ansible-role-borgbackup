@@ -2,7 +2,7 @@
 borg_encryption_passphrase: ''
 borg_exclude_patterns: []
 borgmatic_config_name: config.yaml
-borgmatic_large_repo: true
+borgmatic_large_repo: false
 borgmatic_hooks:
   on_error:
   - echo "`date` - Error while creating a backup."
@@ -29,6 +29,8 @@ borg_retention_policy:
   keep_weekly: 4
   keep_monthly: 6
 ssh_key_file: .ssh/id_ed25519
+ssh_key_create: false
+borg_compression: lz4
 borgmatic_cron_name: borgmatic
 borgmatic_cron_hour: "{{ 6 | random(seed=inventory_hostname) }}"
 borgmatic_cron_minute: "{{ 59 | random(seed=inventory_hostname) }}"

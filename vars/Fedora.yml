@@ -12,6 +12,8 @@ borg_packages:
   - python3-Cython
   - openssh-clients
   - cronie
+  - fuse3-devel 
+  - fuse3
 
 python_bin: python3
 pip_bin: pip3

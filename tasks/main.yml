@@ -17,7 +17,7 @@
     - "{{ ansible_lsb.id }}.yml"
 
 - name: Run OS-specific tasks
-  include: "{{ item }}"
+  include_tasks: "{{ item }}"
   with_first_found:
     - "{{ ansible_os_family }}-{{ ansible_distribution_major_version }}.yml"
     - "{{ ansible_os_family }}.yml"
@@ -48,6 +48,17 @@
     virtualenv: /opt/borgmatic
   when: borg_python_packages is defined
 
+- name: Create borg command in /usr/local/bin
+  copy:
+    content: |
+      #!/bin/bash
+      . /opt/borgmatic/bin/activate
+      borg "$@"
+    dest: /usr/local/bin/borg
+    owner: root
+    group: root
+    mode: "0755"
+
 - name: Create borgmatic command in /usr/local/bin
   copy:
     content: |
@@ -66,10 +77,12 @@
     ssh_key_file: "{{ ssh_key_file }}"
     ssh_key_type: ed25519
   register: root_user
+  when: ssh_key_create|default(false)|bool == true
 
 - name: Print key created for root user (use for remote repo)
   debug:
     var: root_user['ssh_public_key']
+  when: ssh_key_create|default(false)|bool == true
 
 - name: Ensure /etc/borgmatic exists
   file:
